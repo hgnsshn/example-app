@@ -1,0 +1,4 @@
+flask
+sqlalchemy
+pyjwt
+psycopg2
