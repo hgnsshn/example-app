@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import Base, User
@@ -8,6 +9,7 @@ import time
 from config import DATABASE_URL, SECRET_KEY, JWT_EXPIRATION_SECONDS
 
 app = Flask(__name__)
+CORS(app)
 
 engine = create_engine(DATABASE_URL)
 Base.metadata.bind = engine

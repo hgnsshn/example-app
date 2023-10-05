@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, joinedload
 from models import Base, Order
 import requests
 import jwt
@@ -32,6 +32,22 @@ def verify_jwt(token):
         return None  # Token has expired
     except jwt.InvalidTokenError:
         return None  # Invalid token
+
+@app.route('/orders', methods=['GET'])
+def get_all_orders():
+
+    session = DBSession()
+    orders = session.query(Order).options(joinedload(Order.product)).all()
+
+    orders_json = [{
+        "id": order.id,
+        "product_name": order.product.name if order.product else None,
+        "quantity": order.quantity
+    } for order in orders]
+
+    session.close()
+
+    return jsonify(orders_json), 200
 
 @app.route('/orders/<int:order_id>', methods=['GET'])
 def get_order(order_id):

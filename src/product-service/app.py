@@ -34,6 +34,16 @@ def verify_jwt(token):
     except jwt.InvalidTokenError:
         return None  # Invalid token
 
+@app.route('/products', methods=['GET'])
+def get_all_products():
+
+    session = DBSession()
+    products = session.query(Product).all()
+    session.close()
+
+    products_json = [product.to_json() for product in products]
+    return jsonify(products_json), 200
+
 @app.route('/products/<int:product_id>', methods=['GET'])
 def get_product(product_id):
 

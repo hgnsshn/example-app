@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Example App</title>
+</head>
+<body>
+    <h1>Welcome to Example App</h1>
+    <h2>Login</h2>
+    <form action="/login" method="post" id="loginForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username"><br><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+    <script>
+        // Redirect to the home page after successful login
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Make an API call to the login microservice to fetch the JWT token
+            fetch('http://localhost:5000/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('JWT Token:', data.jwt_token);
+                // Save the JWT token to local storage for subsequent requests
+                localStorage.setItem('jwtToken', data.jwt_token);
+
+                // Redirect to the home page or perform other actions after successful login
+                window.location.href = '/home';
+            })
+            .catch(error => console.error('Error:', error));
+        });    
+    </script>
+</body>
+</html>
+

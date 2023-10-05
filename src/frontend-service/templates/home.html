@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home Page</title>
+</head>
+<body>
+    <h1>Welcome to the Home Page</h1>
+    <ul>
+        <li><a id="productsLink" href="/products">List of Products</a></li>
+        <li><a id="userInfoLink" href="/user/info">User Information and Orders</a></li>
+    </ul>
+    <script>
+        // Retrieve the JWT token from local storage
+        const jwtToken = localStorage.getItem('jwtToken');
+
+        // Update the href attribute of the products and user links
+        document.getElementById('productsLink').href += `?token=${jwtToken}`;
+        document.getElementById('userInfoLink').href += `?token=${jwtToken}`;
+    </script>
+</body>
+</html>
+

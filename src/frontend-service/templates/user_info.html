@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Information</title>
+</head>
+<body>
+    <h1>User Information</h1>
+    <p>User Name: {{ user.username }}</p>
+    <p>Email: {{ user.email }}</p>
+
+    <h2>Orders</h2>
+    <ul>
+        {% for order in orders %}
+        <li>Order ID: {{ order.id }} - Product Name: {{ order.product_name }} - Qty: {{ order.quantity }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+
