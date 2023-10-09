@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres_container
+    environment:
+      POSTGRES_DB: my_database
+      POSTGRES_USER: my_user
+      POSTGRES_PASSWORD: my_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/16/main
+
+  user-service:
+    image: local-registry:5200/user-service:latest
+    container_name: user_service_container
+    depends_on:
+      - postgres
+    ports:
+      - "5001:5001"
+
+  product-service:
+    image: local-registry:5200/product-service:latest
+    container_name: product_service_container
+    depends_on:
+      - postgres
+    ports:
+      - "5002:5002"
+
+  order-service:
+    image: local-registry:5200/order-service:latest
+    container_name: order_service_container
+    depends_on:
+      - postgres
+    ports:
+      - "5003:5003"
+
+  frontend:
+    image: local-registry:5200/frontend-service:latest
+    container_name: frontend_container
+    depends_on:
+      - user-service
+      - product-service
+      - order-service
+    ports:
+      - "5100:5100"
+
+volumes:
+  postgres_data:
+
+networks:
+  my_network:
+    driver: bridge

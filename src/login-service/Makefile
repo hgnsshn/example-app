@@ -1,5 +1,5 @@
 REPO ?= local-registry:5200
-APP_NAME ?= user-service
+APP_NAME ?= login-service
 GIT_HASH ?= $(shell git log --format="%h" -n 1)
 
 build:
