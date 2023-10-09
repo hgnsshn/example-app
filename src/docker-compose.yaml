@@ -5,13 +5,16 @@ services:
     image: postgres:16
     container_name: postgres_container
     environment:
-      POSTGRES_DB: my_database
-      POSTGRES_USER: my_user
-      POSTGRES_PASSWORD: my_password
+      POSTGRES_DB: exampleapp
+      POSTGRES_USER: exampleuser
+      POSTGRES_PASSWORD: password
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/16/main
+      - /var/lib/postgresql/16/main:/var/lib/postgresql/16/main
+      - ./migrations:/docker-entrypoint-initdb.d
+    networks:
+      - example_network 
 
   user-service:
     image: local-registry:5200/user-service:latest
@@ -20,6 +23,8 @@ services:
       - postgres
     ports:
       - "5001:5001"
+    networks:
+      - example_network
 
   product-service:
     image: local-registry:5200/product-service:latest
@@ -28,6 +33,8 @@ services:
       - postgres
     ports:
       - "5002:5002"
+    networks:
+      - example_network
 
   order-service:
     image: local-registry:5200/order-service:latest
@@ -36,6 +43,8 @@ services:
       - postgres
     ports:
       - "5003:5003"
+    networks:
+      - example_network
 
   frontend:
     image: local-registry:5200/frontend-service:latest
@@ -46,10 +55,9 @@ services:
       - order-service
     ports:
       - "5100:5100"
-
-volumes:
-  postgres_data:
+    networks:
+      - example_network
 
 networks:
-  my_network:
+  example_network:
     driver: bridge
