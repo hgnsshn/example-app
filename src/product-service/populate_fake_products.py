@@ -5,7 +5,7 @@ from faker import Faker
 import random
 
 # PostgreSQL database configuration
-DATABASE_URL = 'postgresql://antonv:password@localhost/exampleapp'
+DATABASE_URL = 'postgresql://exampleuser:password@localhost:5432/exampleapp'
 engine = create_engine(DATABASE_URL)
 Base.metadata.bind = engine
 
