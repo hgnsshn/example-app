@@ -3,3 +3,4 @@ flask_cors
 sqlalchemy
 pyjwt
 psycopg2
+gunicorn

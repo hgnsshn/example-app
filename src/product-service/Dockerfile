@@ -8,5 +8,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 5002
 
-CMD ["python", "app.py"]
-
+ENTRYPOINT ["gunicorn", "-w", "4", "-b", "0.0.0.0:5002", "app:app"]

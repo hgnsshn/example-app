@@ -7,6 +7,7 @@ import jwt
 import logging
 import time
 from config import DATABASE_URL, SECRET_KEY, JWT_EXPIRATION_SECONDS
+from app import app
 
 app = Flask(__name__)
 CORS(app)
@@ -35,6 +36,7 @@ def authenticate_user(username, password):
     
     session = DBSession()
     user = session.query(User).filter_by(username=username, password=password).first()
+    logger.info(f"user")
     session.close()
 
     if user:
