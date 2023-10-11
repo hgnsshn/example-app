@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   postgres:
@@ -8,68 +8,69 @@ services:
       POSTGRES_DB: exampleapp
       POSTGRES_USER: exampleuser
       POSTGRES_PASSWORD: password
+      PGDATA: /var/lib/postgresql/data/pgdata
     ports:
       - "0.0.0.0:5432:5432" # bind to host for populating scripts
     volumes:
-      - /var/lib/postgresql/16/main:/var/lib/postgresql/16/main
+      - /var/lib/postgresql/data/pgdata:/var/lib/postgresql/data/pgdata
       - ./migrations:/docker-entrypoint-initdb.d
     networks:
       - example_network 
 
   login-service:
-    build: ./login-service/
-    container_name: login_service_container
-    command: gunicorn -b 0.0.0.0:5000 'app:app' --reload
+    build: ./login/
+    container_name: login_container
+    command: app:app --host 0.0.0.0 --port 5000 --reload
     ports:
       - "5000:5000"
     volumes:
-      - ./login-service/:/app
+      - ./login/:/app
     networks:
       - example_network
 
   user-service:
-    build: ./user-service/
-    container_name: user_service_container
-    command: gunicorn -b 0.0.0.0:5001 'app:app' --reload
+    build: ./user/
+    container_name: user_container
+    command: app:app --host 0.0.0.0 --port 5001 --reload
     depends_on:
       - postgres
     ports:
       - "5001:5001"
     volumes:
-      - ./user-service/:/app
+      - ./user/:/app
     networks:
       - example_network
 
   product-service:
-    build: ./product-service/
-    container_name: product_service_container
-    command: gunicorn -b 0.0.0.0:5002 'app:app' --reload
+    build: ./product/
+    container_name: product_container
+    command: app:app --host 0.0.0.0 --port 5002 --reload
     depends_on:
       - postgres
     ports:
       - "5002:5002"
     volumes:
-      - ./product-service/:/app
+      - ./product/:/app
     networks:
       - example_network
 
   order-service:
-    build: ./order-service/
-    container_name: order_service_container
-    command: gunicorn -b 0.0.0.0:5003 'app:app' --reload
+    build: ./order/
+    container_name: order_container
+    command: app:app --host 0.0.0.0 --port 5003 --reload
     depends_on:
       - postgres
     ports:
       - "5003:5003"
     volumes:
-      - ./order-service/:/app
+      - ./order/:/app
     networks:
       - example_network
 
-  frontend:
-    build: ./frontend-service/
+  frontend-service:
+    build: ./frontend/
     container_name: frontend_container
-    command: gunicorn -b 0.0.0.0:5100 'app:app' --reload
+    command: app:app --host 0.0.0.0 --port 5100 --reload
     depends_on:
       - user-service
       - product-service
@@ -77,7 +78,7 @@ services:
     ports:
       - "5100:5100"
     volumes:
-      - ./frontend-service/:/app
+      - ./frontend/:/app
     networks:
       - example_network
 

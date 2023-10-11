@@ -1,6 +1,0 @@
-flask
-sqlalchemy
-psycopg2-binary
-faker
-pyjwt
-gunicorn
