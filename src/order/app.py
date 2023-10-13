@@ -5,7 +5,12 @@ from models import Base, Order
 import requests
 import jwt
 import logging
-from config import SECRET_KEY, DATABASE_URL, USER_SERVICE_URL, PRODUCT_SERVICE_URL
+import os
+
+DATABASE_URL = os.environ.get('DATABASE_URL')
+JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY')
+USER_SERVICE_URL = os.environ.get('USER_SERVICE_URL')
+PRODUCT_SERVICE_URL = os.environ.get('PRODUCT_SERVICE_URL')
 
 app = FastAPI()
 
@@ -24,7 +29,7 @@ def extract_token(authorization: str = Header(None)):
 
 def verify_jwt(token):
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+        payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=['HS256'])
         logger.info("JWT Token Decoded Successfully")
         logger.info(f"Payload: {payload}")
         return payload

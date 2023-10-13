@@ -8,7 +8,11 @@ from models import Base, User
 import jwt
 import logging
 import time
-from config import DATABASE_URL, SECRET_KEY, JWT_EXPIRATION_SECONDS
+import os
+
+DATABASE_URL = os.environ.get('DATABASE_URL')
+SECRET_KEY = os.environ.get('JWT_SECRET_KEY')
+JWT_EXPIRATION_SECONDS = os.environ.get('JWT_EXPIRATION_SECONDS')
 
 app = FastAPI()
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
@@ -55,7 +59,7 @@ def generate_jwt(user_id, expiration_seconds=JWT_EXPIRATION_SECONDS):
         "user_id": user_id,
         "exp": expiration_time
     }
-    return jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+    return jwt.encode(payload, JWT_SECRET_KEY, algorithm='HS256')
 
 if __name__ == '__main__':
     import uvicorn

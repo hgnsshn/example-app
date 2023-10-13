@@ -1,82 +1,86 @@
 version: "3.8"
 
 services:
-  postgres:
-    image: postgres:16
-    container_name: postgres_container
-    environment:
-      POSTGRES_DB: exampleapp
-      POSTGRES_USER: exampleuser
-      POSTGRES_PASSWORD: password
-      PGDATA: /var/lib/postgresql/data/pgdata
-    ports:
-      - "0.0.0.0:5432:5432" # bind to host for populating scripts
-    volumes:
-      - /var/lib/postgresql/data/pgdata:/var/lib/postgresql/data/pgdata
-      - ./migrations:/docker-entrypoint-initdb.d
-    networks:
-      - example_network 
-
   login-service:
-    build: ./login/
+    build:
+      context: ./login/
+      args:
+        - DATABASE_URL="${DATABASE_URL}"
+        - JWT_SECRET_KEY="${JWT_SECRET_KEY}"
+        - JWT_EXPIRATION_SECONDS="${JWT_EXPIRATION_SECONDS}"dd
+        - LOGIN_SERVICE_PORT="${LOGIN_SERVICE_PORT}"
     container_name: login_container
-    command: app:app --host 0.0.0.0 --port 5000 --reload
+    command: app:app --host 0.0.0.0 --port ${LOGIN_SERVICE_PORT} --reload
     ports:
-      - "5000:5000"
+      - "${LOGIN_SERVICE_PORT}:${LOGIN_SERVICE_PORT}"
     volumes:
       - ./login/:/app
     networks:
       - example_network
 
   user-service:
-    build: ./user/
+    build:
+      context: ./user/
+      args:
+        - DATABASE_URL=${DATABASE_URL}
+        - JWT_SECRET_KEY=${JWT_SECRET_KEY}
     container_name: user_container
-    command: app:app --host 0.0.0.0 --port 5001 --reload
-    depends_on:
-      - postgres
+    command: app:app --host 0.0.0.0 --port ${USER_SERVICE_PORT} --reload
     ports:
-      - "5001:5001"
+      - "${USER_SERVICE_PORT}:${USER_SERVICE_PORT}"
     volumes:
       - ./user/:/app
     networks:
       - example_network
 
   product-service:
-    build: ./product/
+    build:
+      context: ./product/
+      args:
+        - DATABASE_URL=${DATABASE_URL}
+        - JWT_SECRET_KEY=${JWT_SECRET_KEY}
     container_name: product_container
-    command: app:app --host 0.0.0.0 --port 5002 --reload
-    depends_on:
-      - postgres
+    command: app:app --host 0.0.0.0 --port ${PRODUCT_SERVICE_PORT} --reload
     ports:
-      - "5002:5002"
+      - "${PRODUCT_SERVICE_PORT}:${PRODUCT_SERVICE_PORT}"
     volumes:
       - ./product/:/app
     networks:
       - example_network
 
   order-service:
-    build: ./order/
+    build:
+      context: ./order/
+      args:
+        - DATABASE_URL=${DATABASE_URL}
+        - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+        - USER_SERVICE_URL=${USER_SERVICE_URL}
+        - PRODUCT_SERVICE_URL=${PRODUCT_SERVICE_URL}
     container_name: order_container
-    command: app:app --host 0.0.0.0 --port 5003 --reload
-    depends_on:
-      - postgres
+    command: app:app --host 0.0.0.0 --port ${ORDER_SERVICE_PORT} --reload
     ports:
-      - "5003:5003"
+      - "${ORDER_SERVICE_PORT}:${ORDER_SERVICE_PORT}"
     volumes:
       - ./order/:/app
     networks:
       - example_network
 
   frontend-service:
-    build: ./frontend/
+    build:
+      context: ./frontend/
+      args:
+        - USER_SERVICE_URL=${USER_SERVICE_URL}
+        - PRODUCT_SERVICE_URL=${PRODUCT_SERVICE_URL}
+        - ORDER_SERVICE_URL=${ORDER_SERVICE_URL}
+        - JWT_SECRET_KEY=${JWT_SECRET_KEY}
     container_name: frontend_container
-    command: app:app --host 0.0.0.0 --port 5100 --reload
+    command: app:app --host 0.0.0.0 --port ${FRONTEND_SERVICE_PORT} --reload
     depends_on:
       - user-service
       - product-service
       - order-service
     ports:
-      - "5100:5100"
+      - "${FRONTEND_SERVICE_PORT}:${FRONTEND_SERVICE_PORT}"
     volumes:
       - ./frontend/:/app
     networks:

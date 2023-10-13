@@ -1,9 +1,5 @@
 \c exampleapp;
 
-GRANT CONNECT ON DATABASE exampleapp TO exampleuser;
-
-GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO exampleuser;
-
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(255) UNIQUE NOT NULL,
@@ -11,6 +7,8 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) UNIQUE NOT NULL,
     full_name VARCHAR(255) NOT NULL
 );
+GRANT ALL ON users TO exampleuser;
+GRANT USAGE, SELECT ON users_id_seq TO exampleuser;
 
 CREATE TABLE IF NOT EXISTS products (
     id SERIAL PRIMARY KEY,
@@ -18,6 +16,8 @@ CREATE TABLE IF NOT EXISTS products (
     description TEXT,
     price INTEGER NOT NULL
 );
+GRANT ALL ON products TO exampleuser;
+GRANT USAGE, SELECT ON products_id_seq TO exampleuser;
 
 CREATE TABLE IF NOT EXISTS orders (
     id SERIAL PRIMARY KEY,
@@ -27,4 +27,5 @@ CREATE TABLE IF NOT EXISTS orders (
     FOREIGN KEY (product_id) REFERENCES products(id),
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
-
+GRANT ALL ON orders TO exampleuser;
+GRANT USAGE, SELECT ON orders_id_seq TO exampleuser;

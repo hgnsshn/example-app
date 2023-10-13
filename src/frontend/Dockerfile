@@ -1,5 +1,16 @@
 FROM python:3.11
 
+ARG USER_SERVICE_URL
+ARG PRODUCT_SERVICE_URL
+ARG ORDER_SERVICE_URL
+ARG JWT_SECRET_KEY
+ARG FRONTEND_SERVICE_PORT
+
+ENV USER_SERVICE_URL=${USER_SERVICE_URL}
+ENV PRODUCT_SERVICE_URL=${PRODUCT_SERVICE_URL}
+ENV ORDER_SERVICE_URL=${ORDER_SERVICE_URL}
+ENV JWT_SECRET_KEY=${JWT_SECRET_KEY}
+
 WORKDIR /app
 
 COPY requirements.txt /app/requirements.txt
@@ -7,8 +18,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . /app
 
-EXPOSE 5100
+EXPOSE ${FRONTEND_SERVICE_PORT}
 
 ENTRYPOINT ["uvicorn"]
-CMD ["app:app", "--host", "0.0.0.0", "--port", "5100"]
+CMD ["app:app", "--host", "0.0.0.0", "--port", "${FRONTEND_SERVICE_PORT}"]
 

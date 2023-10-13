@@ -5,7 +5,12 @@ from fastapi.middleware.cors import CORSMiddleware
 import requests
 import logging
 import jwt
-from config import PRODUCT_SERVICE_URL, USER_SERVICE_URL, ORDER_SERVICE_URL, SECRET_KEY
+import os
+
+USER_SERVICE_URL = os.environ.get('USER_SERVICE_URL')
+PRODUCT_SERVICE_URL = os.environ.get('PRODUCT_SERVICE_URL')
+ORDER_SERVICE_URL = os.environ.get('ORDER_SERVICE_URL')
+JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY')
 
 app = FastAPI()
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
@@ -16,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 def extract_user_id_from_jwt(jwt_token):
     try:
-        decoded_token = jwt.decode(jwt_token, SECRET_KEY, algorithms=['HS256'])
+        decoded_token = jwt.decode(jwt_token, JWT_SECRET_KEY, algorithms=['HS256'])
         user_id = decoded_token.get('user_id')
         return user_id
     except jwt.ExpiredSignatureError:
