@@ -14,7 +14,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . /app
 
-EXPOSE ${PRODUCT_SERVICE_PORT}
-
 ENTRYPOINT ["uvicorn"]
 CMD ["app:app", "--host", "0.0.0.0", "--port", "${PRODUCT_SERVICE_PORT}"]
