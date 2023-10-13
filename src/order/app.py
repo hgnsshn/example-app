@@ -7,10 +7,10 @@ import jwt
 import logging
 import os
 
-DATABASE_URL = os.environ.get('DATABASE_URL')
-JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY')
-USER_SERVICE_URL = os.environ.get('USER_SERVICE_URL')
-PRODUCT_SERVICE_URL = os.environ.get('PRODUCT_SERVICE_URL')
+DATABASE_URL = os.environ.get('DATABASE_URL').strip('"')
+JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY').strip('"')
+USER_SERVICE_URL = os.environ.get('USER_SERVICE_URL').strip('"')
+PRODUCT_SERVICE_URL = os.environ.get('PRODUCT_SERVICE_URL').strip('"')
 
 app = FastAPI()
 

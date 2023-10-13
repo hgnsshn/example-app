@@ -18,74 +18,74 @@ services:
     networks:
       - example_network
 
-        #  user-service:
-        #    build:
-        #      context: ./user/
-        #      args:
-        #        - DATABASE_URL=${DATABASE_URL}
-        #        - JWT_SECRET_KEY=${JWT_SECRET_KEY}
-        #    container_name: user_container
-        #    command: app:app --host 0.0.0.0 --port ${USER_SERVICE_PORT} --reload
-        #    ports:
-        #      - "${USER_SERVICE_PORT}:${USER_SERVICE_PORT}"
-        #    volumes:
-        #      - ./user/:/app
-        #    networks:
-        #      - example_network
-        #
-        #  product-service:
-        #    build:
-        #      context: ./product/
-        #      args:
-        #        - DATABASE_URL=${DATABASE_URL}
-        #        - JWT_SECRET_KEY=${JWT_SECRET_KEY}
-        #    container_name: product_container
-        #    command: app:app --host 0.0.0.0 --port ${PRODUCT_SERVICE_PORT} --reload
-        #    ports:
-        #      - "${PRODUCT_SERVICE_PORT}:${PRODUCT_SERVICE_PORT}"
-        #    volumes:
-        #      - ./product/:/app
-        #    networks:
-        #      - example_network
-        #
-        #  order-service:
-        #    build:
-        #      context: ./order/
-        #      args:
-        #        - DATABASE_URL=${DATABASE_URL}
-        #        - JWT_SECRET_KEY=${JWT_SECRET_KEY}
-        #        - USER_SERVICE_URL=${USER_SERVICE_URL}
-        #        - PRODUCT_SERVICE_URL=${PRODUCT_SERVICE_URL}
-        #    container_name: order_container
-        #    command: app:app --host 0.0.0.0 --port ${ORDER_SERVICE_PORT} --reload
-        #    ports:
-        #      - "${ORDER_SERVICE_PORT}:${ORDER_SERVICE_PORT}"
-        #    volumes:
-        #      - ./order/:/app
-        #    networks:
-        #      - example_network
-        #
-        #  frontend-service:
-        #    build:
-        #      context: ./frontend/
-        #      args:
-        #        - USER_SERVICE_URL=${USER_SERVICE_URL}
-        #        - PRODUCT_SERVICE_URL=${PRODUCT_SERVICE_URL}
-        #        - ORDER_SERVICE_URL=${ORDER_SERVICE_URL}
-        #        - JWT_SECRET_KEY=${JWT_SECRET_KEY}
-        #    container_name: frontend_container
-        #    command: app:app --host 0.0.0.0 --port ${FRONTEND_SERVICE_PORT} --reload
-        #    depends_on:
-        #      - user-service
-        #      - product-service
-        #      - order-service
-        #    ports:
-        #      - "${FRONTEND_SERVICE_PORT}:${FRONTEND_SERVICE_PORT}"
-        #    volumes:
-        #      - ./frontend/:/app
-        #    networks:
-        #      - example_network
-        #
+  user-service:
+    build:
+      context: ./user/
+      args:
+        - DATABASE_URL=${DATABASE_URL}
+        - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+    container_name: user_container
+    command: app:app --host 0.0.0.0 --port ${USER_SERVICE_PORT} --reload
+    ports:
+      - "${USER_SERVICE_PORT}:${USER_SERVICE_PORT}"
+    volumes:
+      - ./user/:/app
+    networks:
+      - example_network
+
+  product-service:
+    build:
+      context: ./product/
+      args:
+        - DATABASE_URL=${DATABASE_URL}
+        - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+    container_name: product_container
+    command: app:app --host 0.0.0.0 --port ${PRODUCT_SERVICE_PORT} --reload
+    ports:
+      - "${PRODUCT_SERVICE_PORT}:${PRODUCT_SERVICE_PORT}"
+    volumes:
+      - ./product/:/app
+    networks:
+      - example_network
+
+  order-service:
+    build:
+      context: ./order/
+      args:
+        - DATABASE_URL=${DATABASE_URL}
+        - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+        - USER_SERVICE_URL=${USER_SERVICE_URL}
+        - PRODUCT_SERVICE_URL=${PRODUCT_SERVICE_URL}
+    container_name: order_container
+    command: app:app --host 0.0.0.0 --port ${ORDER_SERVICE_PORT} --reload
+    ports:
+      - "${ORDER_SERVICE_PORT}:${ORDER_SERVICE_PORT}"
+    volumes:
+      - ./order/:/app
+    networks:
+      - example_network
+
+  frontend-service:
+    build:
+      context: ./frontend/
+      args:
+        - USER_SERVICE_URL=${USER_SERVICE_URL}
+        - PRODUCT_SERVICE_URL=${PRODUCT_SERVICE_URL}
+        - ORDER_SERVICE_URL=${ORDER_SERVICE_URL}
+        - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+    container_name: frontend_container
+    command: app:app --host 0.0.0.0 --port ${FRONTEND_SERVICE_PORT} --reload
+    depends_on:
+      - user-service
+      - product-service
+      - order-service
+    ports:
+      - "${FRONTEND_SERVICE_PORT}:${FRONTEND_SERVICE_PORT}"
+    volumes:
+      - ./frontend/:/app
+    networks:
+      - example_network
+
 networks:
   example_network:
     driver: bridge

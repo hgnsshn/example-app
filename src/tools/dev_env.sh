@@ -8,7 +8,7 @@ up() {
 
     if [[ -z "$DATABASE_URL" ]]; then
         HOST_IP=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | head -n1)
-        DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${HOST_IP}:5432/${POSTGRES_DB}"
+        DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${HOST_IP}:5432/${POSTGRES_DB}
         echo "DATABASE_URL=${DATABASE_URL}" >> .env
     fi
     docker compose up -d
@@ -24,7 +24,7 @@ rebuild() {
     fi
 
     docker compose down
-    docker compose build --progress plain --no-cache
+    docker compose build
     docker compose up -d
 }
 

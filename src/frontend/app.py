@@ -7,10 +7,10 @@ import logging
 import jwt
 import os
 
-USER_SERVICE_URL = os.environ.get('USER_SERVICE_URL')
-PRODUCT_SERVICE_URL = os.environ.get('PRODUCT_SERVICE_URL')
-ORDER_SERVICE_URL = os.environ.get('ORDER_SERVICE_URL')
-JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY')
+USER_SERVICE_URL = os.environ.get('USER_SERVICE_URL').strip('"')
+PRODUCT_SERVICE_URL = os.environ.get('PRODUCT_SERVICE_URL').strip('"')
+ORDER_SERVICE_URL = os.environ.get('ORDER_SERVICE_URL').strip('"')
+JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY').strip('"')
 
 app = FastAPI()
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])

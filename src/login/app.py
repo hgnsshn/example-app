@@ -10,19 +10,20 @@ import logging
 import time
 import os
 
-DATABASE_URL = os.environ.get('DATABASE_URL')
-SECRET_KEY = os.environ.get('JWT_SECRET_KEY')
-JWT_EXPIRATION_SECONDS = os.environ.get('JWT_EXPIRATION_SECONDS')
+DATABASE_URL = os.environ.get('DATABASE_URL').strip('"')
+SECRET_KEY = os.environ.get('JWT_SECRET_KEY').strip('"')
+JWT_EXPIRATION_SECONDS = os.environ.get('JWT_EXPIRATION_SECONDS').strip('"')
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
+logger.info(f"{DATABASE_URL}")
 engine = create_engine(DATABASE_URL)
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 class LoginRequest(BaseModel):
     username: str
