@@ -1,17 +1,49 @@
 #!/usr/bin/env bash
-set -e -x
+set -e
 
-up() {
-    if [[ -f .env ]]; then
-        source .env
-    fi
+if [[ -f .env ]]; then
+    source .env
+fi
+
+set_db_url() {
 
     if [[ -z "$DATABASE_URL" ]]; then
-        HOST_IP=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | head -n1)
-        DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${HOST_IP}:5432/${POSTGRES_DB}
-        echo "DATABASE_URL=${DATABASE_URL}" >> .env
+        HOST_IP=$(ip addr | grep "inet.*global dynamic" | sed -n 's/.*inet \([0-9.]\+\)\/.*/\1/p')
+        echo "DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${HOST_IP}:5432/${POSTGRES_DB}" >> .env
+    else
+        HOST_IP=$(ip addr | grep "inet.*global dynamic" | sed -n 's/.*inet \([0-9.]\+\)\/.*/\1/p')
+        sed -i "s/DATABASE_URL=.*/DATABASE_URL=postgresql:\/\/${POSTGRES_USER}:${POSTGRES_PASSWORD}\@${HOST_IP}:5432\/${POSTGRES_DB}/" .env
     fi
+}
+
+update_pg_hba() {
+
+    DOCKER_SUBNET=$(docker network inspect ${COMPOSE_PROJECT_NAME}_net | jq -r '.[0].IPAM.Config[0].Subnet')
+    AUTH_METHOD=md5
+    PG_HBA_FILE=$(find / -name pg_hba.conf 2> /dev/null | head -n 1)
+
+    if [ -z "$PG_HBA_FILE" ]; then
+        echo "pg_hba.conf file not found."
+        return 1
+    fi
+
+    if grep -q "host\s\+all\s\+all\s\+.*\s\+$AUTH_METHOD" "$PG_HBA_FILE"; then
+        echo "Subnet record for docker subnet present in pg_hba.conf. Updating..."
+        sed -i "s|^host\s\+all\s\+all\s\+.*\s\+$AUTH_METHOD\$|host\tall\tall\t$DOCKER_SUBNET\t$AUTH_METHOD|" "$PG_HBA_FILE"
+        echo "Updated."
+        sudo systemctl restart postgresql
+    else
+        echo "No record found for docker subnet in pg_hba.conf. Adding..."
+        echo "host\tall\tall\t$DOCKER_SUBNET\t$AUTH_METHOD" >> "$PG_HBA_FILE"
+        echo "Added."
+        sudo systemctl restart postgresql
+    fi
+}
+
+up() {
+    set_db_url    
     docker compose up -d
+    update_pg_hba
 }
 
 down() {
@@ -19,18 +51,14 @@ down() {
 }
 
 rebuild() {
-    if [[ -f .env ]]; then
-        source .env
-    fi
-
-    docker compose down
-    docker compose build
-    docker compose up -d
+    down
+    docker compose build 
+    up
 }
 
 usage() {
     echo "Usage: $0 <subcommand>"
-    echo "Subcommands:"
+    echo "Subcommands:":wq
     echo "  up - spin up the dev environment"
     echo "  down - shutdown the dev environment"
     echo "  rebuild - rebuild the containers and restart the dev environment"

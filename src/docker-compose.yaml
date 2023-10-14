@@ -7,7 +7,7 @@ services:
       args:
         - DATABASE_URL="${DATABASE_URL}"
         - JWT_SECRET_KEY="${JWT_SECRET_KEY}"
-        - JWT_EXPIRATION_SECONDS="${JWT_EXPIRATION_SECONDS}"dd
+        - JWT_EXPIRATION_SECONDS="${JWT_EXPIRATION_SECONDS}"
         - LOGIN_SERVICE_PORT="${LOGIN_SERVICE_PORT}"
     container_name: login_container
     command: app:app --host 0.0.0.0 --port ${LOGIN_SERVICE_PORT} --reload
@@ -16,7 +16,7 @@ services:
     volumes:
       - ./login/:/app
     networks:
-      - example_network
+      - net
 
   user-service:
     build:
@@ -31,7 +31,7 @@ services:
     volumes:
       - ./user/:/app
     networks:
-      - example_network
+      - net
 
   product-service:
     build:
@@ -46,7 +46,7 @@ services:
     volumes:
       - ./product/:/app
     networks:
-      - example_network
+      - net
 
   order-service:
     build:
@@ -63,7 +63,7 @@ services:
     volumes:
       - ./order/:/app
     networks:
-      - example_network
+      - net
 
   frontend-service:
     build:
@@ -84,8 +84,8 @@ services:
     volumes:
       - ./frontend/:/app
     networks:
-      - example_network
+      - net
 
 networks:
-  example_network:
+  net:
     driver: bridge
