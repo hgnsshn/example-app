@@ -11,7 +11,7 @@ import time
 import os
 
 DATABASE_URL = os.environ.get('DATABASE_URL').strip('"')
-SECRET_KEY = os.environ.get('JWT_SECRET_KEY').strip('"')
+JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY').strip('"')
 JWT_EXPIRATION_SECONDS = int(os.environ.get('JWT_EXPIRATION_SECONDS').strip('"'))
 
 logging.basicConfig(level=logging.INFO)
@@ -22,6 +22,7 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, 
 
 logger.info(f"{DATABASE_URL}")
 logger.info(f"{JWT_EXPIRATION_SECONDS}")
+logger.info("Hello world")
 engine = create_engine(DATABASE_URL)
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
